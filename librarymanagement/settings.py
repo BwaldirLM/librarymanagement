@@ -14,6 +14,7 @@ import os
 
 from django.core.exceptions import ImproperlyConfigured
 
+# Obtener valor de variable de entorno
 def get_env_value(env_variable):
     try:
         return os.environ[env_variable]
