@@ -12,6 +12,16 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+from django.core.exceptions import ImproperlyConfigured
+
+def get_env_value(env_variable):
+    try:
+        return os.environ[env_variable]
+    except KeyError:
+        error_msg = f'Defina variable de entorno {env_variable}'
+        raise ImproperlyConfigured(error_msg)
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,7 +30,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!nvt5ub^njfu@cp*fc(y7m7z5lnhbh$mp$$sigh(11ysozmp&e'
+# SECRET_KEY = '!nvt5ub^njfu@cp*fc(y7m7z5lnhbh$mp$$sigh(11ysozmp&e'
+SECRET_KEY = get_env_value('SECRET_KEY') # os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,12 +87,19 @@ WSGI_APPLICATION = 'librarymanagement.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'librarymanagement',
-        'USER': 'postgres',
-        'PASSWORD': '123456',
-        'HOST': '127.0.0.1',
-        'PORT': 5432
+        'NAME': get_env_value('DATABASE_NAME'), # os.environ['DATABASE_NAME'],
+        'USER': get_env_value('DATABASE_USER'), # os.environ['DATABASE_USER'],
+        'PASSWORD': get_env_value('DATABASE_PASSWORD'), # os.environ['DATABASE_PASSWORD'],
+        'HOST': get_env_value('DATABASE_HOST'), # os.environ['DATABASE_HOST'],
+        'PORT': int(get_env_value('DATABASE_PORT')) # int(os.environ['DATABASE_PORT'])
     }
+    
+    #'NAME': 'librarymanagement',
+    #'USER': 'postgres',
+    #'PASSWORD': '123456',
+    #'HOST': '127.0.0.1',
+    #'PORT': 5432
+    
 }
 
 
